@@ -1,10 +1,13 @@
 <template lang="pug">
 #layout-default.px-0.px-md-5.py-5.font-jura
     #radar.bg-dark-deep.d-flex.flex-wrap
-        .radar-box.border-coral(v-for="(box, index) in 9", :key="'box-'+index")
-        #user-icon.d-flex.flex-column.align-items-center.justify-content-center
+        .radar-box.border-coral(v-for="(route, index) in getRoutesList", :key="'route-'+index")
+            .text-center(v-if="route.name != getActiveRoute") {{route.name}}
+        #user-icon.d-flex.flex-column.align-items-center.justify-content-center(
+            :style="{ left: 'calc( 5vw * '+ radarX + ')', top: 'calc( 5vw * '+ radarY + ')'}"
+        )
             i.fas.fa-dot-circle
-            | HOME
+            span {{this.$route.name}}
     transition(name="opacity-0")
         #top-controller.controller-y.shadow-lg(
             @click="changeRoute('index')"
@@ -19,6 +22,9 @@
             .d-flex.align-items-center
                 i.fas.fa-chevron-left.fa-3x.text-coral
                 h6.mb-0.text-white.mx-3 My CV
+    #clock.bg-coral.p-3 {{getTimenow}}
+
+
     Nuxt
     transition(name="opacity-0")
         #right-controller.d-none.d-md-block.controller-x.shadow-lg(
@@ -40,10 +46,14 @@
 </template>
 
 <script>
+const dayjs = require('dayjs')
+
 export default {
     data(){
         return {
-            controllerStatus : false
+            controllerStatus : false,
+            radarX : 1,
+            radarY : 1
         }
     },
     methods : {
@@ -53,15 +63,39 @@ export default {
                 this.controllerStatus = false
             else
                 this.controllerStatus = true
+        },
+        updateRadar(){
+            switch(this.$route.name){
+                case 'index':
+                    this.radarX = 1
+                    this.radarY = 1
+                    break;
+                case 'work':
+                    this.radarX = 1
+                    this.radarY = 2
+                    break;
+            }
         }
     },
     computed : {
         getActiveRoute(){
             return this.$route.name
+        },
+        getTimenow(){
+            const timenow = dayjs()
+            return timenow
+        },
+        getRoutesList(){
+            return this.$router.options.routes;
         }
     },
+    updated(){
+        this.updateRadar()
+    },
     mounted(){
-        console.log(this.$route)
+        console.log(this.$router.options.routes)
+        this.updateRadar()
+        console.log(this.$routes)
     }
 }
 </script>
@@ -84,10 +118,14 @@ export default {
         margin-top: 5vw
     #user-icon
         position: absolute
-        top: 5vw
-        left: 5vw
         width: 5vw
         height: 5vw
+        transition: all 1s
+#clock
+    position: absolute
+    top: 0
+    right: 0
+    border-bottom-left-radius: 15px
 #layout-default
     height: 100vh
     background-color: $dark
