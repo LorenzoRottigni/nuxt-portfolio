@@ -1,0 +1,16 @@
+.page-enter-active, .page-leave-active 
+  transition: all 1s
+
+.page-enter 
+  transform: translateY(200%)
+
+.page-leave-active
+  transform: translateY(-200%)
+
+/* controller left transitions */
+
+.opacity-0-enter-active, .opacity-0-leave-active
+  transition: opacity 1s
+
+.opacity-0-enter, .opacity-0-leave-to
+  opacity: 0
