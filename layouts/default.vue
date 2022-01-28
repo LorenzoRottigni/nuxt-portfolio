@@ -1,39 +1,41 @@
 <template lang="pug">
-    #layout-default.px-0.px-md-5.py-5.font-jura
-        transition(name="opacity-0")
-            #top-controller.controller-y.shadow-lg(
-                @click="changeRoute('index')"
-            )
-                .d-flex.flex-column.align-items-center
-                    i.fas.fa-chevron-up.fa-3x.text-coral
-                    h6.mb-0.text-white {{(!controllerStatus) ? 'my thoughts' : 'home'}}
-        transition(name="opacity-0")
-            #left-controller.d-none.d-md-block.controller-x.shadow-lg(
-                v-if="getActiveRoute === 'index'"
-            )
-                .d-flex.align-items-center
-                    i.fas.fa-chevron-left.fa-3x.text-coral
-                    h6.mb-0.text-white.mx-3 My CV
-
-        Nuxt
-
-        transition(name="opacity-0")
-            #right-controller.d-none.d-md-block.controller-x.shadow-lg(
-                v-if="getActiveRoute === 'index'"
-            )
-                .d-flex.align-items-center
-                    h6.mb-0.text-white.mx-3 My experience
-                    i.fas.fa-chevron-right.fa-3x.text-coral
-        transition(name="opacity-0")
-            #bottom-controller.controller-y.shadow-lg(
-                @click="changeRoute('work')"
-                v-if="getActiveRoute === 'index'"            
-            )
-                .d-flex.flex-column.align-items-center    
-                    h6.mb-0.text-white My work
-                    i.fas.fa-chevron-down.fa-3x.text-coral
-
-        Footer
+#layout-default.px-0.px-md-5.py-5.font-jura
+    #radar.bg-dark-deep.d-flex.flex-wrap
+        .radar-box.border-coral(v-for="(box, index) in 9", :key="'box-'+index")
+        #user-icon.d-flex.flex-column.align-items-center.justify-content-center
+            i.fas.fa-dot-circle
+            | HOME
+    transition(name="opacity-0")
+        #top-controller.controller-y.shadow-lg(
+            @click="changeRoute('index')"
+        )
+            .d-flex.flex-column.align-items-center
+                i.fas.fa-chevron-up.fa-3x.text-coral
+                h6.mb-0.text-white {{(!controllerStatus) ? 'my thoughts' : 'home'}}
+    transition(name="opacity-0")
+        #left-controller.d-none.d-md-block.controller-x.shadow-lg(
+            v-if="getActiveRoute === 'index'"
+        )   
+            .d-flex.align-items-center
+                i.fas.fa-chevron-left.fa-3x.text-coral
+                h6.mb-0.text-white.mx-3 My CV
+    Nuxt
+    transition(name="opacity-0")
+        #right-controller.d-none.d-md-block.controller-x.shadow-lg(
+            v-if="getActiveRoute === 'index'"
+        )
+            .d-flex.align-items-center
+                h6.mb-0.text-white.mx-3 My experience
+                i.fas.fa-chevron-right.fa-3x.text-coral
+    transition(name="opacity-0")
+        #bottom-controller.controller-y.shadow-lg(
+            @click="changeRoute('work')"
+            v-if="getActiveRoute === 'index'"            
+        )
+            .d-flex.flex-column.align-items-center    
+                h6.mb-0.text-white My work
+                i.fas.fa-chevron-down.fa-3x.text-coral
+    Footer
 
 </template>
 
@@ -65,6 +67,27 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+#radar 
+    position: absolute
+    top: 0
+    left: 0
+    height: 15vw
+    width: calc(15vw + 3px)
+    border-bottom: solid 3px $coral
+    border-right: solid 3px $coral
+    .radar-box
+        width: 5vw
+        height: 5vw 
+    .radar-offset-x
+        margin-left: 5vw
+    .radar-offset-y
+        margin-top: 5vw
+    #user-icon
+        position: absolute
+        top: 5vw
+        left: 5vw
+        width: 5vw
+        height: 5vw
 #layout-default
     height: 100vh
     background-color: $dark
