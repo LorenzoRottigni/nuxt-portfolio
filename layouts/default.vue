@@ -1,45 +1,67 @@
 <template lang="pug">
 #layout-default.px-0.px-md-5.py-5.font-jura
-    #radar.bg-dark-deep.d-flex.flex-wrap
-        .radar-box.border-coral(v-for="(route, index) in getRoutesList", :key="'route-'+index")
-            .text-center(v-if="route.name != getActiveRoute") {{route.name}}
-        #user-icon.d-flex.flex-column.align-items-center.justify-content-center(
-            :style="{ left: 'calc( 5vw * '+ radarX + ')', top: 'calc( 5vw * '+ radarY + ')'}"
-        )
-            i.fas.fa-dot-circle
-            span {{this.$route.name}}
+    //-
+        #radar.bg-dark-deep.d-flex.flex-wrap
+            .radar-box.border-coral(v-for="(route, index) in radarRoutes", :key="'route-'+index")
+                .h-100.d-flex.flex-column.align-items-center.justify-content-center(
+                    v-if="route.name != getActiveRoute"
+                )
+                    span(v-html="route.template") 
+                    span {\{route.name}}
+            #user-icon.d-flex.flex-column.align-items-center.justify-content-center(
+                :style="{ left: 'calc( 5vw * '+ radarX + ')', top: 'calc( 5vw * '+ radarY + ')'}"
+            )
+                i.fas.fa-dot-circle
+                span {\{this.$route.name}}
+    Radar(
+        @radarNext="setRadarNextRouteName",
+        @radarPrevious="setRadarPreviousRouteName"
+        @radarTop="setRadarTopRouteName",
+        @radarBottom="setRadarBottomRouteName",
+    )
+
+
     transition(name="opacity-0")
         #top-controller.controller-y.shadow-lg(
-            @click="changeRoute('index')"
+            @click="changeRoute(radarTopRouteName)",
+            v-if="radarTopRouteName"
         )
             .d-flex.flex-column.align-items-center
                 i.fas.fa-chevron-up.fa-3x.text-coral
-                h6.mb-0.text-white {{(!controllerStatus) ? 'my thoughts' : 'home'}}
+                h6.mb-0.text-white {{radarTopRouteName}}
     transition(name="opacity-0")
         #left-controller.d-none.d-md-block.controller-x.shadow-lg(
-            v-if="getActiveRoute === 'index'"
+            @click="changeRoute(radarPreviousRouteName)",
+            v-if="radarPreviousRouteName"
         )   
             .d-flex.align-items-center
                 i.fas.fa-chevron-left.fa-3x.text-coral
-                h6.mb-0.text-white.mx-3 My CV
-    #clock.bg-coral.p-3 {{getTimenow}}
+                h6.mb-0.text-white.mx-3 {{radarPreviousRouteName}}
+    #clock.bg-coral.p-3 
+        button.btn.btn-dark-deep HELP 
+        span.mx-3 {{getTimenow}}
+        span {{radarNextRouteName}}
+        span {{radarPreviousRouteName}}
+        span {{radarTopRouteName}}
+        span {{radarBottomRouteName}}
 
 
     Nuxt
     transition(name="opacity-0")
         #right-controller.d-none.d-md-block.controller-x.shadow-lg(
-            v-if="getActiveRoute === 'index'"
+            @click="changeRoute(radarNextRouteName)",
+            v-if="radarNextRouteName"
         )
             .d-flex.align-items-center
-                h6.mb-0.text-white.mx-3 My experience
+                h6.mb-0.text-white.mx-3 {{radarNextRouteName}}
                 i.fas.fa-chevron-right.fa-3x.text-coral
     transition(name="opacity-0")
         #bottom-controller.controller-y.shadow-lg(
-            @click="changeRoute('work')"
-            v-if="getActiveRoute === 'index'"            
+            @click="changeRoute(radarBottomRouteName)",
+            v-if="radarBottomRouteName"
         )
             .d-flex.flex-column.align-items-center    
-                h6.mb-0.text-white My work
+                h6.mb-0.text-white {{radarBottomRouteName}}
                 i.fas.fa-chevron-down.fa-3x.text-coral
     Footer
 
@@ -51,19 +73,42 @@ const dayjs = require('dayjs')
 export default {
     data(){
         return {
-            controllerStatus : false,
-            radarX : 1,
-            radarY : 1
+            radarNextRouteName : undefined,
+            radarPreviousRouteName : undefined,
+            radarTopRouteName : undefined,
+            radarBottomRouteName : undefined,
         }
     },
     methods : {
-        changeRoute(route){
-            this.$router.push({ name: route })
-            if(route == 'index')
-                this.controllerStatus = false
-            else
-                this.controllerStatus = true
+        setRadarNextRouteName(event){
+            console.log('event:')
+            console.dir(event)
+
+            this.radarNextRouteName = event
         },
+        setRadarPreviousRouteName(event){
+            console.log('event:')
+            console.dir(event)
+
+            this.radarPreviousRouteName = event
+        },
+        setRadarTopRouteName(event){
+            console.log('event:')
+            console.dir(event)
+
+            this.radarTopRouteName = event
+        },
+        setRadarBottomRouteName(event){
+            console.log('event:')
+            console.dir(event)
+
+            this.radarBottomRouteName = event
+        },
+        changeRoute(route){
+
+            this.$router.push({ name: route })
+        },
+        /*
         updateRadar(){
             switch(this.$route.name){
                 case 'index':
@@ -75,52 +120,109 @@ export default {
                     this.radarY = 2
                     break;
             }
-        }
-    },
-    computed : {
-        getActiveRoute(){
-            return this.$route.name
         },
+        hasRadarRoute(position){
+
+            const result = this.getActiveRadarRoute
+
+            const radarIndex = result[0].id
+
+            switch(position){
+                case 'next':
+                    if(this.radarRoutes[radarIndex + 1])
+                        return true
+                    else
+                        return false
+                    break;
+                case 'previous':
+                    if(this.radarRoutes[radarIndex - 1])
+                        return true
+                    else
+                        return false
+                    break;
+                case 'top':
+                    if(this.radarRoutes[radarIndex - 3])
+                        return true
+                    else
+                        return false
+                    break;
+                case 'bottom':
+                    if(this.radarRoutes[radarIndex + 3])
+                       return true
+                    else
+                       return false
+                    break;
+            }
+        },
+        getRadarRouteName(position){
+            const result = this.getActiveRadarRoute
+            const radarIndex = result[0].id
+    
+            switch(position){
+                case 'next':
+                    return this.radarRoutes[radarIndex + 1].name
+                    break;
+                case 'previous':
+                    return this.radarRoutes[radarIndex - 1].name
+                    break;
+                case 'top':
+                    return this.radarRoutes[radarIndex - 3].name
+                    break;
+                case 'bottom':
+                    return this.radarRoutes[radarIndex + 3].name
+                    break;
+            }
+        }*/
+    },
+    
+    computed : {
+    //    getActiveRoute(){
+    //        return this.$route.name
+    //    },
+    //    getActiveRadarRoute(){
+    //        return this.radarRoutes.filter(route => route.name === this.$route.name)
+    //    },
         getTimenow(){
             const timenow = dayjs()
             return timenow
         },
-        getRoutesList(){
-            return this.$router.options.routes;
-        }
-    },
-    updated(){
-        this.updateRadar()
+    //    getRoutesList(){
+    //        return this.$router.options.routes;
+    //    }
+    //},
+    //updated(){
+    //    this.updateRadar()
+    //},
     },
     mounted(){
         console.log(this.$router.options.routes)
-        this.updateRadar()
+        //this.updateRadar()
         console.log(this.$routes)
     }
 }
 </script>
 
 <style lang="sass" scoped>
-#radar 
-    position: absolute
-    top: 0
-    left: 0
-    height: 15vw
-    width: calc(15vw + 3px)
-    border-bottom: solid 3px $coral
-    border-right: solid 3px $coral
-    .radar-box
-        width: 5vw
-        height: 5vw 
-    .radar-offset-x
-        margin-left: 5vw
-    .radar-offset-y
-        margin-top: 5vw
-    #user-icon
-        position: absolute
-        width: 5vw
-        height: 5vw
-        transition: all 1s
+//#radar 
+//    position: absolute
+//    top: 0
+//    left: 0
+//    height: 15vw
+//    width: calc(15vw + 3px)
+//    border-bottom: solid 3px $coral
+//    border-right: solid 3px $coral
+//    .radar-box
+//        width: 5vw
+//        height: 5vw 
+//    .radar-offset-x
+//        margin-left: 5vw
+//    .radar-offset-y
+//        margin-top: 5vw
+//    #user-icon
+//        position: absolute
+//        width: 5vw
+//        height: 5vw
+//        transition: all 1s
 #clock
     position: absolute
     top: 0
