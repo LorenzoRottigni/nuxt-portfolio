@@ -53,5 +53,8 @@ export default {
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    babelrc: false,
+    cacheDirectory: undefined,
+    presets: ['@nuxt/babel-preset-app']
   },
 }
