@@ -4,14 +4,14 @@ div.h-100.overflow-auto.container-fluid
         .col-12.mt-5
             h1.text-coral.text-center.mb-0.mt-5 Look at my favourite repositories!
     .row#video-player.mt-5
-        .col-3.offset-1.bg-dark-deep.p-3.rounded.shadow
+        .col-2.offset-2.bg-dark-deep.p-3.rounded.shadow
             ul.list-unstyled.mb-0.text-coral
                 li.mt-3(
                     v-for="(video, index) in videos" :key="'video-item-' + index"
                     @click="setActiveIndex(index)"
                 )
                     h5 {{video.id}} | {{video.name}}
-        .col-7
+        .col-6
             #vimeo-overlay.bg-dark-deep.p-3.rounded.shadow
                 .vimeo-slide
                     h2.text-coral.text-center {{getActiveVideo.name}} - {{getActiveVideo.id}}

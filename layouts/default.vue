@@ -1,25 +1,25 @@
 <template lang="pug">
-#layout-default.px-0.px-md-5.py-5.font-jura
-    //-
-        #radar.bg-dark-deep.d-flex.flex-wrap
-            .radar-box.border-coral(v-for="(route, index) in radarRoutes", :key="'route-'+index")
-                .h-100.d-flex.flex-column.align-items-center.justify-content-center(
-                    v-if="route.name != getActiveRoute"
-                )
-                    span(v-html="route.template") 
-                    span {\{route.name}}
-            #user-icon.d-flex.flex-column.align-items-center.justify-content-center(
-                :style="{ left: 'calc( 5vw * '+ radarX + ')', top: 'calc( 5vw * '+ radarY + ')'}"
-            )
-                i.fas.fa-dot-circle
-                span {\{this.$route.name}}
-    Radar(
+#layout-default.px-0.px-md-5.py-5.font-jura(
+
+)
+
+    //-----------------------------------------//
+    //  RADAR
+    //-----------------------------------------//
+
+    // get radar active route and its near routes every redirect
+    Radar.d-none.d-md-flex(
         @radarNext="setRadarNextRouteName",
         @radarPrevious="setRadarPreviousRouteName"
         @radarTop="setRadarTopRouteName",
         @radarBottom="setRadarBottomRouteName",
+        @radarActiveIndex="setRadarActiveId"
     )
 
+
+    //-----------------------------------------//
+    //  CONTROLLER TOP
+    //-----------------------------------------//
 
     transition(name="opacity-0")
         #top-controller.controller-y.shadow-lg(
@@ -27,34 +27,42 @@
             v-if="radarTopRouteName"
         )
             .d-flex.flex-column.align-items-center
-                i.fas.fa-chevron-up.fa-3x.text-coral
+                i.fas.fa-chevron-up.fa-2x.text-coral
                 h6.mb-0.text-white {{radarTopRouteName}}
+
+    
+    //-----------------------------------------//
+    //  CONTROLLER LEFT
+    //-----------------------------------------//
+
     transition(name="opacity-0")
-        #left-controller.d-none.d-md-block.controller-x.shadow-lg(
+        #left-controller.d-none.d-sm-block.controller-x.shadow-lg(
             @click="changeRoute(radarPreviousRouteName)",
-            v-if="radarPreviousRouteName"
+            v-if="checkRadarPreviousRouteName"
         )   
             .d-flex.align-items-center
-                i.fas.fa-chevron-left.fa-3x.text-coral
+                i.fas.fa-chevron-left.fa-2x.text-coral
                 h6.mb-0.text-white.mx-3 {{radarPreviousRouteName}}
-    #clock.bg-coral.p-3 
-        button.btn.btn-dark-deep HELP 
-        span.mx-3 {{getTimenow}}
-        span {{radarNextRouteName}}
-        span {{radarPreviousRouteName}}
-        span {{radarTopRouteName}}
-        span {{radarBottomRouteName}}
 
 
-    Nuxt
+    //-----------------------------------------//
+    //  CONTROLLER RIGHT
+    //-----------------------------------------//
+
     transition(name="opacity-0")
-        #right-controller.d-none.d-md-block.controller-x.shadow-lg(
+        #right-controller.d-none.d-sm-block.controller-x.shadow-lg(
             @click="changeRoute(radarNextRouteName)",
-            v-if="radarNextRouteName"
+            v-if="checkRadarNextRouteName"
         )
             .d-flex.align-items-center
                 h6.mb-0.text-white.mx-3 {{radarNextRouteName}}
-                i.fas.fa-chevron-right.fa-3x.text-coral
+                i.fas.fa-chevron-right.fa-2x.text-coral
+
+    
+    //-----------------------------------------//
+    //  CONTROLLER BOTTOM
+    //-----------------------------------------//
+
     transition(name="opacity-0")
         #bottom-controller.controller-y.shadow-lg(
             @click="changeRoute(radarBottomRouteName)",
@@ -62,7 +70,29 @@
         )
             .d-flex.flex-column.align-items-center    
                 h6.mb-0.text-white {{radarBottomRouteName}}
-                i.fas.fa-chevron-down.fa-3x.text-coral
+                i.fas.fa-chevron-down.fa-2x.text-coral
+    
+
+    //-----------------------------------------//
+    //  TOP RIGHT CLOCK SECTION
+    //-----------------------------------------//
+
+    #clock.bg-coral.p-3.d-none.d-lg-block 
+        button.btn.btn-dark-deep HELP 
+        span.mx-3 {{getTimenow}}
+
+
+    //-----------------------------------------//
+    //  NUXT ROUTER
+    //-----------------------------------------//
+
+    Nuxt
+
+
+    //-----------------------------------------//
+    //  FOOTER
+    //-----------------------------------------//
+
     Footer
 
 </template>
@@ -73,156 +103,132 @@ const dayjs = require('dayjs')
 export default {
     data(){
         return {
+            ROW_SIZE : 3,
             radarNextRouteName : undefined,
             radarPreviousRouteName : undefined,
             radarTopRouteName : undefined,
             radarBottomRouteName : undefined,
+            radarActiveId : undefined
         }
     },
-    methods : {
-        setRadarNextRouteName(event){
-            console.log('event:')
-            console.dir(event)
-
-            this.radarNextRouteName = event
-        },
-        setRadarPreviousRouteName(event){
-            console.log('event:')
-            console.dir(event)
-
-            this.radarPreviousRouteName = event
-        },
-        setRadarTopRouteName(event){
-            console.log('event:')
-            console.dir(event)
-
-            this.radarTopRouteName = event
-        },
-        setRadarBottomRouteName(event){
-            console.log('event:')
-            console.dir(event)
-
-            this.radarBottomRouteName = event
-        },
-        changeRoute(route){
-
-            this.$router.push({ name: route })
-        },
-        /*
-        updateRadar(){
-            switch(this.$route.name){
-                case 'index':
-                    this.radarX = 1
-                    this.radarY = 1
-                    break;
-                case 'work':
-                    this.radarX = 1
-                    this.radarY = 2
-                    break;
-            }
-        },
-        hasRadarRoute(position){
-
-            const result = this.getActiveRadarRoute
-
-            const radarIndex = result[0].id
-
-            switch(position){
-                case 'next':
-                    if(this.radarRoutes[radarIndex + 1])
-                        return true
-                    else
-                        return false
-                    break;
-                case 'previous':
-                    if(this.radarRoutes[radarIndex - 1])
-                        return true
-                    else
-                        return false
-                    break;
-                case 'top':
-                    if(this.radarRoutes[radarIndex - 3])
-                        return true
-                    else
-                        return false
-                    break;
-                case 'bottom':
-                    if(this.radarRoutes[radarIndex + 3])
-                       return true
-                    else
-                       return false
-                    break;
-            }
-        },
-        getRadarRouteName(position){
-            const result = this.getActiveRadarRoute
-            const radarIndex = result[0].id
-    
-            switch(position){
-                case 'next':
-                    return this.radarRoutes[radarIndex + 1].name
-                    break;
-                case 'previous':
-                    return this.radarRoutes[radarIndex - 1].name
-                    break;
-                case 'top':
-                    return this.radarRoutes[radarIndex - 3].name
-                    break;
-                case 'bottom':
-                    return this.radarRoutes[radarIndex + 3].name
-                    break;
-            }
-        }*/
-    },
-    
     computed : {
-    //    getActiveRoute(){
-    //        return this.$route.name
-    //    },
-    //    getActiveRadarRoute(){
-    //        return this.radarRoutes.filter(route => route.name === this.$route.name)
-    //    },
+        /**
+         * @description avoids pacman-effect, check if user should be able to go right
+         */
+        checkRadarNextRouteName(){
+            if((this.radarActiveId % this.ROW_SIZE) != 2){
+                return this.radarNextRouteName
+            }else
+                return undefined
+        },
+
+        /**
+         * @description avoids pacman-effect, check if user should be able to go left
+         */
+        checkRadarPreviousRouteName(){
+            if((this.radarActiveId % this.ROW_SIZE) != 0){
+                return this.radarPreviousRouteName
+            }else
+                return undefined
+        },
+
+        /**
+         * @description gets timenow
+         * @returns {date} timenow
+         */
         getTimenow(){
             const timenow = dayjs()
             return timenow
         },
-    //    getRoutesList(){
-    //        return this.$router.options.routes;
-    //    }
-    //},
-    //updated(){
-    //    this.updateRadar()
-    //},
+    },
+    methods : {
+        /**
+         * 
+         * @param {string} event 
+         * @description gets next route name from custom event emitted by radar and stores it in vue data
+         */
+        setRadarNextRouteName(event){
+
+            this.radarNextRouteName = event
+        },
+        /**
+         * 
+         * @param {string} event 
+         * @description gets previous route name from custom event emitted by radar and stores it in vue data
+         */
+        setRadarPreviousRouteName(event){
+
+            this.radarPreviousRouteName = event
+        },
+        /**
+         * 
+         * @param {string} event 
+         * @description gets top route name from custom event emitted by radar and stores it in vue data
+         */
+        setRadarTopRouteName(event){
+
+            this.radarTopRouteName = event
+        },
+        /**
+         * 
+         * @param {string} event 
+         * @description gets bottom route name from custom event emitted by radar and stores it in vue data
+         */
+        setRadarBottomRouteName(event){
+
+            this.radarBottomRouteName = event
+        },
+        /**
+         * 
+         * @param {string} event 
+         * @description gets active id from custom event emitted by radar and stores it in vue data
+         */
+        setRadarActiveId(event){
+
+            this.radarActiveId = event
+        },
+        /**
+         * 
+         * @param {string} route 
+         * @description sets vue router active route
+         */
+        changeRoute(route){
+            this.$router.push({ name: route })
+        },
+        handleScroll (event) {
+            console.log('scrolling')
+            console.log(event)
+        }
+    },
+    beforeMount(){
+        if(process.browser){
+            console.log('process:')
+
+            console.log(process)
+
+            console.log('adding event')
+            
+            
+            window.addEventListener('scroll', ()=>{
+                console.log('scrolling event')
+                this.changeRoute(this.radarBottomRouteName)
+            });
+
+            console.log(window)
+        }
+            
     },
     mounted(){
-        console.log(this.$router.options.routes)
         //this.updateRadar()
-        console.log(this.$routes)
+    },
+    beforeDestroy(){
+        if(process.browser)
+            window.removeEventListener('scroll', this.handleScroll());
     }
 }
 </script>
 
 <style lang="sass" scoped>
-//#radar 
-//    position: absolute
-//    top: 0
-//    left: 0
-//    height: 15vw
-//    width: calc(15vw + 3px)
-//    border-bottom: solid 3px $coral
-//    border-right: solid 3px $coral
-//    .radar-box
-//        width: 5vw
-//        height: 5vw 
-//    .radar-offset-x
-//        margin-left: 5vw
-//    .radar-offset-y
-//        margin-top: 5vw
-//    #user-icon
-//        position: absolute
-//        width: 5vw
-//        height: 5vw
-//        transition: all 1s
 #clock
     position: absolute
     top: 0
@@ -246,15 +252,26 @@ export default {
         position: absolute
         left: 50%
         transform: translateX(-50%)
-        padding: 0 1.5rem
+        padding: 0.5rem 1.5rem
         z-index: 99
     #top-controller
         top: 0
+        border-bottom: solid 1px $coral
+        border-bottom-left-radius: 10px
+        border-bottom-right-radius: 10px
     #left-controller
         left: 0
+        border-right: solid 1px $coral
+        border-top-right-radius: 10px
+        border-bottom-right-radius: 10px
     #right-controller
         right: 0
+        border-left: solid 1px $coral
+        border-top-left-radius: 10px
+        border-bottom-left-radius: 10px
     #bottom-controller
         bottom: 0
-
+        border-top: solid 1px $coral
+        border-top-left-radius: 10px
+        border-top-right-radius: 10px
 </style>

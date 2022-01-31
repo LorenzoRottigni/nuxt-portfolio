@@ -1,23 +1,28 @@
 <template lang="pug">
-#radar.bg-dark-deep.d-flex.flex-wrap
-        .radar-box.border-coral(v-for="(route, index) in radarRoutes", :key="'route-'+index")
+#radar.bg-dark-deep.flex-wrap(
+    :style="{ width: 'calc(' + boxSize * 3 + 'vw + 3px)', height : 'calc(' + boxSize * 3 + 'vw )' }"
+)
+        .radar-box.border-yellow(
+            v-for="(route, index) in radarRoutes",
+            :key="'route-'+index",
+            @click="changeRoute(route.name)",
+            :style="{ width: boxSize + 'vw', height: boxSize + 'vw'}"
+        )
             .h-100.d-flex.flex-column.align-items-center.justify-content-center(
                 v-if="route.name != getActiveVueRouteName"
             )
                 span(v-html="route.template") 
                 span {{route.name}}
         #user-icon.d-flex.flex-column.align-items-center.justify-content-center(
-            :style="{ left: 'calc( 5vw * '+ radarX + ')', top: 'calc( 5vw * '+ radarY + ')'}"
+            :style="{ left: 'calc( '+ boxSize + 'vw * '+ radarX + ')', top: 'calc( ' + boxSize + 'vw * '+ radarY + ')', width: boxSize + 'vw', height: boxSize + 'vw'}"
         )
-            i.fas.fa-dot-circle
-            span {{this.$route.name}}
+            i.fas.fa-street-view.text-yellow.fa-2x
 </template>
 
 <script>
 export default {
     data(){
         return {
-            ROW_SIZE : 3,
             radarX : undefined,
             radarY : undefined,
             radarRoutes : [
@@ -30,7 +35,7 @@ export default {
                 },
                 {
                     id: 1,
-                    name: 'thoughts',
+                    name: 'skills',
                     template: '<i class="fas fa-cloud fa-lg"></i>',
                     radarX : 1,
                     radarY : 0
@@ -85,7 +90,8 @@ export default {
                     radarY : 2
                 }
             ],
-            radarActiveIndex : 4
+            radarActiveIndex : 4,
+            boxSize : 5
         }
     },
     methods : {
@@ -95,7 +101,34 @@ export default {
         movePown(){
             this.radarX = this.radarRoutes[this.radarActiveIndex].radarX
             this.radarY = this.radarRoutes[this.radarActiveIndex].radarY
-            console.log('X:'+this.radarX+'Y:'+this.radarY)
+        },
+        emitRoutes(route_name){
+            //find the radarActiveRoute using VueRouter route name as key
+            const activeRadarRoute = this.radarRoutes.filter(route => route.name === route_name)
+
+            //get the radarActiveRouteId
+            this.radarActiveIndex = activeRadarRoute[0].id
+
+            //move the user pown in the radar
+            this.movePown()
+
+            //emit the name of the next route
+            this.$emit('radarNext', this.getNextActiveRoute)
+
+            //emit the name of the previous route
+            this.$emit('radarPrevious', this.getPreviousActiveRoute)
+
+            //emit the name of the top route
+            this.$emit('radarTop', this.getTopActiveRoute)
+
+            //emit the name of the bottom route
+            this.$emit('radarBottom', this.getBottomActiveRoute)
+
+            //emit the selected id
+            this.$emit('radarActiveIndex', activeRadarRoute[0].id)
+        },
+        changeRoute(route_name){
+            this.$router.push({ name: route_name })
         }
     },
     computed : {
@@ -105,37 +138,49 @@ export default {
         getActiveVueRouteName(){
             return this.$route.name
         },
+
+        /**
+         * @description if has a next route returns its name else returns undefined
+         */
         getNextActiveRoute(){
             const nextRoute = this.radarRoutes[this.radarActiveIndex + 1]
-            console.log('route')
-            console.dir(nextRoute)
+
             if(nextRoute)
                 return nextRoute.name
             else
                 return undefined
         },
+
+        /**
+         * @description if has a previous route returns its name else returns undefined
+         */
         getPreviousActiveRoute(){
             const nextRoute = this.radarRoutes[this.radarActiveIndex - 1]
-            console.log('route')
-            console.dir(nextRoute)
+
             if(nextRoute)
                 return nextRoute.name
             else
                 return undefined
         },
+
+        /**
+         * @description if has a top route returns its name else returns undefined
+         */
         getTopActiveRoute(){
             const nextRoute = this.radarRoutes[this.radarActiveIndex - 3]
-            console.log('route')
-            console.dir(nextRoute)
+
             if(nextRoute)
                 return nextRoute.name
             else
                 return undefined
         },
+
+        /**
+         * @description if has a bottom route returns its name else returns undefined
+         */
         getBottomActiveRoute(){
             const nextRoute = this.radarRoutes[this.radarActiveIndex + 3]
-            console.log('route')
-            console.dir(nextRoute)
+
             if(nextRoute)
                 return nextRoute.name
             else
@@ -149,28 +194,27 @@ export default {
         getActiveVueRouteName : {
             immediate: true,
             handler(val, old) {
-                //find the radarActiveRoute using VueRouter route name as key
-                const activeRadarRoute = this.radarRoutes.filter(route => route.name === val)
-
-                //get the radarActiveRouteId
-                this.radarActiveIndex = activeRadarRoute[0].id
-
-                //move the user pown in the radar
-                this.movePown()
-
-                //this.$emit('radarNext', activeRadarRoute[0].name)
-                //this.$emit('radarPrevious', activeRadarRoute[0].name)
-                //this.$emit('radarTop', activeRadarRoute[0].name)
-                //this.$emit('radarBottom', activeRadarRoute[0].name)
-
-                this.$emit('radarNext', this.getNextActiveRoute)
-                this.$emit('radarPrevious', this.getPreviousActiveRoute)
-                this.$emit('radarTop', this.getTopActiveRoute)
-                this.$emit('radarBottom', this.getBottomActiveRoute)
+                this.emitRoutes(val);
             }
         }
     },
     created(){
+        if(process.browser){
+            const clientWidth = window.innerWidth
+
+            switch(true){
+                case (clientWidth <= 992):
+                    this.boxSize = 7
+                    break
+                case (clientWidth <= 1200):
+                    this.boxSize = 6
+                    break
+                default: 
+                    this.boxSize = 5
+
+            }
+        }
+        
         // move the user pown in the radar
         this.movePown()
     }
@@ -178,24 +222,43 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@keyframes blink 
+    0%
+        opacity: 1
+    50%
+        opacity: 0
+    100%
+        opacity: 1
+
 #radar 
     position: absolute
     top: 0
     left: 0
-    height: 15vw
-    width: calc(15vw + 3px)
+    //height: 15vw
+    //width: calc(15vw + 3px)
     border-bottom: solid 3px $coral
     border-right: solid 3px $coral
+    border-bottom-right-radius: 2rem
+    overflow: hidden
+    &::after
+        content: ''
+        position: absolute
+        top: 0
+        bottom: 0
+        left: 0
+        right: 0
+        background-image: url('~static/radar-bg.svg')
+        background-repeat: no-repeat
+        background-size: cover
+        animation: blink 1s infinite
     .radar-box
-        width: 5vw
-        height: 5vw 
-    .radar-offset-x
-        margin-left: 5vw
-    .radar-offset-y
-        margin-top: 5vw
+        z-index: 99
+        //width: 5vw
+        //height: 5vw 
     #user-icon
         position: absolute
-        width: 5vw
-        height: 5vw
+        //width: 5vw
+        //height: 5vw
         transition: all 1s
+        z-index: 99
 </style>
