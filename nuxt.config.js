@@ -22,6 +22,7 @@ export default {
     //<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     //<link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&display=swap" rel="stylesheet"></link>
   },
+  target: 'server',
   serverMiddleware: ['~/server-middleware/express-server'],
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
@@ -52,5 +53,5 @@ export default {
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
 }
