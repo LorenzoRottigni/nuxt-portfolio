@@ -201,30 +201,30 @@ export default {
         }
     },
     beforeMount(){
-        if(process.browser){
-            console.log('process:')
-
-            console.log(process)
-
-            console.log('adding event')
-            
-            
-            window.addEventListener('scroll', ()=>{
-                console.log('scrolling event')
-                this.changeRoute(this.radarBottomRouteName)
-            });
-
-            console.log(window)
-        }
+        //if(process.browser){
+        //    console.log('process:')
+//
+        //    console.log(process)
+//
+        //    console.log('adding event')
+        //    
+        //    
+        //    window.addEventListener('scroll', ()=>{
+        //        console.log('scrolling event')
+        //        this.changeRoute(this.radarBottomRouteName)
+        //    });
+//
+        //    console.log(window)
+        //}
             
     },
     mounted(){
         //this.updateRadar()
     },
-    beforeDestroy(){
-        if(process.browser)
-            window.removeEventListener('scroll', this.handleScroll());
-    }
+    //beforeDestroy(){
+    //    if(process.browser)
+    //        window.removeEventListener('scroll', this.handleScroll());
+    //}
 }
 </script>
 

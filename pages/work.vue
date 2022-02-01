@@ -1,21 +1,25 @@
 <template lang="pug">
-div.h-100.overflow-auto.container-fluid
+.h-100.overflow-auto.container-fluid.d-flex.flex-column.justify-content-center
     .row
-        .col-12.mt-5
-            h1.text-coral.text-center.mb-0.mt-5 Look at my favourite repositories!
-    .row#video-player.mt-5
-        .col-2.offset-2.bg-dark-deep.p-3.rounded.shadow
-            ul.list-unstyled.mb-0.text-coral
-                li.mt-3(
+        .col-12.mt-lg-5
+            h2.text-coral.text-center.mb-0.mt-3.mt-lg-5 Look at my favourite repositories!
+    .row#video-player.mt-3.mt-lg-5.flex-grow-2
+        .col-12.col-sm-8.offset-sm-2.col-md-2.offset-md-2.bg-dark-deep.p-3.rounded.shadow
+            ul.list-unstyled.mb-0.text-coral.text-center.text-md-start
+                li.mt-lg3(
                     v-for="(video, index) in videos" :key="'video-item-' + index"
                     @click="setActiveIndex(index)"
                 )
                     h5 {{video.id}} | {{video.name}}
-        .col-6
-            #vimeo-overlay.bg-dark-deep.p-3.rounded.shadow
+        .col-12.col-sm-8.offset-sm-2.col-md-6.offset-md-0.mt-3.mt-md-0
+            #vimeo-overlay.bg-dark-deep.p-md-3.rounded.shadow
                 .vimeo-slide
                     h2.text-coral.text-center {{getActiveVideo.name}} - {{getActiveVideo.id}}
-                    Vimeo( :id="getActiveVideo.id" )
+                    transition(name="opacity-0")
+                        Vimeo( 
+                            :id="getActiveVideo.id",
+                            v-if="!animationTrigger"
+                        )
                     .d-flex.align-items-center.mt-3
                         i.fab.fa-node.fa-2x
                         span.ml-3 @vimeo/player
@@ -54,7 +58,8 @@ export default {
                     Authorization : `Bearer ${this.vimeoToken}`, 
                     'Content-Type': 'application/json' 
                 } 
-            }
+            },
+            animationTrigger : false
         }
     },
     methods:{
@@ -64,7 +69,19 @@ export default {
     },
     computed:{
         getActiveVideo(){
+            this.animationTrigger = true
+            
             return this.videos[this.activeIndex]
+        }
+    },
+    watch: {
+        animationTrigger: {
+            immediate: true,
+            handler(val, oldVal){
+                setTimeout(()=>{
+                    this.animationTrigger = false
+                }, 1100)
+            }
         }
     },
     mounted(){

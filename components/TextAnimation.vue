@@ -1,10 +1,12 @@
 <template lang="pug">
-h1.text-coral.text-center.text-3x Lorenzo Rottigni 
+h1.text-coral.text-center.text-3x {{textContent}}
 </template>
 
 <script>
 export default {
-    
+    props:{
+      textContent : String
+    }
 }
 </script>
 
