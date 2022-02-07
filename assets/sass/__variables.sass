@@ -1,15 +1,28 @@
-$dark : #2e2e2e
+$dark: #2e2e2e
 $dark-deep: #202020
 $yellow: #F9E79F
-$coral : #ff6f28
+$coral: #ff6f28
+$green: #4AF626
+//$primary: #ff6f28
+//$secondary: #2e2e2e
+
+$theme-colors: ("primary": $coral, "warning": $yellow, "dark": $dark, "success": $green)
+
+@import "~bootstrap/scss/bootstrap"
+
 $border-coral : solid 1px $coral
 
 $border-coral-lg : solid 3px $coral
 
+.bg-dark-deep
+    background-color: #202020
+    color: coral
 
 a
     color: $yellow
     text-decoration: underline
+
+
 
 .text-3x
     font-size: 4em
@@ -22,17 +35,24 @@ a
 .bg-coral
     background-color: $coral
     color: $dark
+
+.bg-yellow
+    background-color: $yellow
+    color: $dark
 .border-coral
     border: solid 1px coral
 .border-yellow
-    border: solid 1px rgba(249, 231, 159, 0.5)
+    border: solid 1px rgba(249, 231, 159, 0.1)
 .border-opacity
-    border: solid 1px rgba(255, 111, 40, 0.5)
+    border: solid 1px rgba(255, 111, 40, 0.1)
+.border-dark-deep
+    border: solid 1px $dark-deep
 .font-jura
     font-family: 'Jura', sans-serif
-.bg-dark-deep
-    background-color: #202020
-    color: coral
+
+.fw-bold
+    font-weight: bold
+    text-decoration: underline
 
 .btn-dark-deep
     background-color: $dark

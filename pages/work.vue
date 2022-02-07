@@ -6,7 +6,7 @@
     .row#video-player.mt-3.mt-lg-5.flex-grow-2
         .col-12.col-sm-8.offset-sm-2.col-md-2.offset-md-2.bg-dark-deep.p-3.rounded.shadow
             ul.list-unstyled.mb-0.text-coral.text-center.text-md-start
-                li.mt-lg3(
+                li.my-lg-2(
                     v-for="(video, index) in videos" :key="'video-item-' + index"
                     @click="setActiveIndex(index)"
                 )

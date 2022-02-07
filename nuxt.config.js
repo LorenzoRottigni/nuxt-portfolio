@@ -26,9 +26,11 @@ export default {
   serverMiddleware: ['~/server-middleware/express-server'],
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    'bootstrap/scss/bootstrap.scss',
     '~assets/sass/__variables.sass',
     '~assets/sass/__utility.sass',
-    '@/assets/sass/nuxt-transitions'
+    '@/assets/sass/nuxt-transitions',
+    'primeflex/primeflex.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -41,12 +43,12 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
   ],
-
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
-    '@nuxtjs/style-resources'
+    '@nuxtjs/style-resources',
+    'primevue/nuxt'
   ],
   styleResources: {
     sass: ['./assets/sass/*.sass']
@@ -55,6 +57,7 @@ export default {
   build: {
     babelrc: false,
     cacheDirectory: undefined,
-    presets: ['@nuxt/babel-preset-app']
+    presets: ['@nuxt/babel-preset-app'],
+    transpile: ['primevue'],
   },
 }
