@@ -1,5 +1,5 @@
 <template lang="pug">
-h1.text-coral.text-center.text-3x {{textContent}}
+h1.text-coral.text-center.text-nowrap {{textContent}}
 </template>
 
 <script>
@@ -16,7 +16,7 @@ h1
   -webkit-background-clip: text
   background-clip: text
   color: transparent
-  font-size: 10vw
+  font-size: 36px
   animation: reveal 3000ms ease-in-out forwards 200ms, glow 2500ms linear infinite 2000ms
 
 @keyframes reveal 
@@ -31,6 +31,9 @@ h1
     text-shadow: 0 0 14px $coral
     
   
+@media screen and (min-width: 576) 
+  h1
+    font-size: 48px
 
 
 //a 

@@ -41,7 +41,6 @@ app.get('/vimeo', (req, res)=>{
 app.get('/repos', (req, res)=>{
     axios.get('https://api.github.com/users/LorenzoRottigni/repos', githubConfig)
         .then((response)=>{
-            console.log(response.data)
             res.send(response.data)
         })
         .catch((err)=>{
